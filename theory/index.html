@@ -1,254 +1,643 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edexcel iGCSE Computer Science - Theory Portal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: { DEFAULT: '#007BA6', dark: '#005F80', light: '#eef7fa' },
-            tealAccent: { DEFAULT: '#00796B', light: '#e0f2f1' }
-          }
-        }
-      }
-    }
-  </script>
-</head>
-<body class="bg-slate-100 text-slate-800 p-4 min-h-screen">
-
-  <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edexcel iGCSE Computer Science - Theory Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
-    <!-- HEADER -->
-    <header class="bg-gradient-to-r from-brand to-tealAccent text-white p-6">
-      <span class="bg-white/20 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Edexcel iGCSE Paper 1</span>
-      <h1 class="text-3xl font-bold mt-2">Theory Revision Portal</h1>
-      <p class="text-tealAccent-light text-sm mt-1">Full specification coverage including AI, Robotics, and Emerging Trends</p>
-    </header>
-
-    <!-- TOPIC SELECTION MATRIX -->
-    <main class="p-6 space-y-6">
-      <h2 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-book-open text-brand mr-2"></i>Select a Unit to Launch Interactive Suite</h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#007BA6',
+                            dark: '#005F80',
+                            light: '#eef7fa',
+                        },
+                        tealAccent: {
+                            DEFAULT: '#00796B',
+                            light: '#e0f2f1',
+                        },
+                        alertRed: '#C62828'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
         
-        <!-- Topic 1 -->
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 hover:border-brand transition-all flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-brand bg-brand-light px-2.5 py-0.5 rounded-full">Topic 1</span>
-              <i class="fa-solid fa-brain text-slate-400"></i>
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen p-3 md:p-6 flex flex-col">
+
+    <div class="max-w-5xl mx-auto w-full bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden flex flex-col flex-1">
+        
+        <!-- HEADER & OVERALL PROGRESS -->
+        <header class="bg-gradient-to-r from-brand to-tealAccent text-white p-4 md:p-6 shadow-md">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <span class="inline-block bg-white/20 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider mb-2">Edexcel iGCSE Computer Science</span>
+                    <h1 id="portal-title" class="text-2xl md:text-3xl font-bold">Theory Revision Portal</h1>
+                    <p id="portal-subtitle" class="text-tealAccent-light text-sm mt-1">Select a unit below to launch interactive practice</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/20 flex items-center gap-3 self-start md:self-auto min-w-[160px]">
+                    <div class="text-3xl text-yellow-300"><i class="fa-solid fa-trophy"></i></div>
+                    <div>
+                        <div class="text-xs text-slate-100 font-medium">Topic Mastery</div>
+                        <div id="overall-progress-text" class="text-xl font-bold">0%</div>
+                    </div>
+                </div>
             </div>
-            <h3 class="font-bold text-slate-800">Problem Solving & Algorithms</h3>
-            <p class="text-xs text-slate-500 mt-1">Abstraction, Decomposition, Algorithmic Thinking, Search & Sort theory.</p>
-          </div>
-          <button onclick="launchSuite('topic1')" class="mt-4 w-full py-2 bg-brand hover:bg-brand-dark text-white font-semibold text-xs rounded-lg transition-all">
-            Launch Topic 1 Suite
-          </button>
-        </div>
 
-        <!-- Topic 2 -->
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 hover:border-brand transition-all flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-brand bg-brand-light px-2.5 py-0.5 rounded-full">Topic 2</span>
-              <i class="fa-solid fa-binary text-slate-400"></i>
+            <!-- UNIT SELECTION DROPDOWN / SELECTOR -->
+            <div class="mt-4 pt-4 border-t border-white/20 flex flex-wrap items-center justify-between gap-3">
+                <label class="text-xs uppercase font-bold tracking-wider text-tealAccent-light flex items-center gap-2">
+                    <i class="fa-solid fa-book"></i> Active Unit Suite:
+                </label>
+                <select id="unit-selector" onchange="switchUnit(this.value)" class="bg-white/10 text-white font-semibold text-sm border border-white/30 rounded-lg px-3 py-1.5 focus:outline-none focus:bg-white focus:text-slate-800 transition-all cursor-pointer">
+                    <option value="topic2" class="text-slate-800">Topic 2: Data Representation (Full)</option>
+                    <option value="topic3" class="text-slate-800">Topic 3: Computers & Systems</option>
+                    <option value="topic4" class="text-slate-800">Topic 4: Communication & Networks</option>
+                    <option value="topic5" class="text-slate-800">Topic 5: Issues & Cyber Security</option>
+                    <option value="ai" class="text-slate-800">Emerging Tech: AI, Robotics & Automation</option>
+                </select>
             </div>
-            <h3 class="font-bold text-slate-800">Data Representation</h3>
-            <p class="text-xs text-slate-500 mt-1">Binary, Hexadecimal, Two's Complement, ASCII/Unicode, Bitmap Images & Audio.</p>
-          </div>
-          <button onclick="launchSuite('topic2')" class="mt-4 w-full py-2 bg-brand hover:bg-brand-dark text-white font-semibold text-xs rounded-lg transition-all">
-            Launch Topic 2 Suite
-          </button>
-        </div>
 
-        <!-- Topic 3 -->
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 hover:border-brand transition-all flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-brand bg-brand-light px-2.5 py-0.5 rounded-full">Topic 3</span>
-              <i class="fa-solid fa-microchip text-slate-400"></i>
+            <!-- Navigation Tabs -->
+            <nav class="flex gap-1 md:gap-2 mt-4 overflow-x-auto pb-1 border-b border-white/20 no-scrollbar text-xs md:text-sm font-medium">
+                <button onclick="switchTab('flashcards')" id="tab-flashcards" class="tab-btn active-tab flex items-center gap-2 px-3 py-2 rounded-t-lg bg-white text-brand font-semibold transition-all shrink-0">
+                    <i class="fa-solid fa-layer-group"></i> 1. Flashcards
+                </button>
+                <button onclick="switchTab('matching')" id="tab-matching" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-t-lg text-white hover:bg-white/10 transition-all shrink-0">
+                    <i class="fa-solid fa-puzzle-piece"></i> 2. Term Match
+                </button>
+                <button onclick="switchTab('sorting')" id="tab-sorting" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-t-lg text-white hover:bg-white/10 transition-all shrink-0">
+                    <i class="fa-solid fa-boxes-stacked"></i> 3. Categorise
+                </button>
+                <button onclick="switchTab('fillblanks')" id="tab-fillblanks" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-t-lg text-white hover:bg-white/10 transition-all shrink-0">
+                    <i class="fa-solid fa-pen-to-square"></i> 4. Keywords
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn flex items-center gap-2 px-3 py-2 rounded-t-lg text-white hover:bg-white/10 transition-all shrink-0">
+                    <i class="fa-solid fa-circle-check"></i> 5. Practice Quiz
+                </button>
+            </nav>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="p-4 md:p-6 flex-1 bg-slate-50/50">
+
+            <!-- MODE 1: FLASHCARDS -->
+            <section id="section-flashcards" class="tab-content fade-in space-y-4">
+                <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-slate-200 text-sm">
+                    <span class="text-slate-600 font-medium"><i class="fa-solid fa-rotate text-brand mr-2"></i>Tap card to flip definition</span>
+                    <span id="flashcard-counter" class="font-bold text-brand">1 / 1</span>
+                </div>
+
+                <div class="perspective-1000 w-full min-h-[260px] md:min-h-[300px] cursor-pointer group" onclick="flipCard()">
+                    <div id="flashcard-inner" class="relative w-full h-full min-h-[260px] md:min-h-[300px] rounded-2xl shadow-sm border border-slate-200 bg-white transition-transform duration-500 transform-style-3d text-center p-6 flex flex-col justify-center items-center">
+                        <div class="absolute inset-0 backface-hidden p-6 flex flex-col items-center justify-center bg-white rounded-2xl border-2 border-brand/20">
+                            <span class="text-xs font-bold text-brand bg-brand-light px-3 py-1 rounded-full uppercase tracking-wider mb-4">Key Term</span>
+                            <h2 id="card-front-term" class="text-2xl md:text-3xl font-bold text-slate-800">Term</h2>
+                            <p class="text-xs text-slate-400 mt-6"><i class="fa-solid fa-hand-pointer mr-1"></i> Click to flip definition</p>
+                        </div>
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 p-6 flex flex-col items-center justify-center bg-brand-light rounded-2xl border-2 border-brand">
+                            <span class="text-xs font-bold text-tealAccent bg-white px-3 py-1 rounded-full uppercase tracking-wider mb-2">Definition</span>
+                            <p id="card-back-def" class="text-slate-700 text-base md:text-lg font-medium leading-relaxed max-w-lg">Definition text</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                    <button onclick="prevCard()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg text-sm transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Previous
+                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="markCard(false)" class="px-4 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 font-semibold rounded-lg text-sm transition-all flex items-center gap-1.5 border border-rose-300">
+                            <i class="fa-solid fa-xmark"></i> Review Again
+                        </button>
+                        <button onclick="markCard(true)" class="px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold rounded-lg text-sm transition-all flex items-center gap-1.5 border border-emerald-300">
+                            <i class="fa-solid fa-check"></i> Got It!
+                        </button>
+                    </div>
+                    <button onclick="nextCard()" class="px-4 py-2 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg text-sm transition-all flex items-center gap-2">
+                        Next <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- MODE 2: MATCHING GAME -->
+            <section id="section-matching" class="tab-content hidden fade-in space-y-4">
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-wrap justify-between items-center text-sm gap-2">
+                    <p class="text-slate-600"><i class="fa-solid fa-hand-pointer text-brand mr-2"></i>Select a <strong>Term</strong> on the left, then select its matching <strong>Definition</strong> on the right.</p>
+                    <div class="flex items-center gap-4">
+                        <span class="font-semibold text-slate-700"><i class="fa-solid fa-stopwatch text-slate-400 mr-1"></i> Time: <span id="matching-timer" class="font-mono text-brand">00:00</span></span>
+                        <button onclick="initMatchingGame()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded font-medium border border-slate-300"><i class="fa-solid fa-rotate-right mr-1"></i> Reset</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="matching-terms" class="space-y-2.5"></div>
+                    <div id="matching-defs" class="space-y-2.5"></div>
+                </div>
+            </section>
+
+            <!-- MODE 3: CATEGORISATION -->
+            <section id="section-sorting" class="tab-content hidden fade-in space-y-4">
+                <div class="bg-white p-3.5 rounded-lg border border-slate-200 flex flex-wrap justify-between items-center text-sm gap-2">
+                    <p class="text-slate-600"><i class="fa-solid fa-layer-group text-brand mr-2"></i>Tap an item below to assign it to its correct category.</p>
+                    <button onclick="initSortingGame()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded font-medium border border-slate-300"><i class="fa-solid fa-rotate-right mr-1"></i> Reset</button>
+                </div>
+
+                <div class="bg-slate-100 p-4 rounded-xl border border-slate-300 min-h-[90px]">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Unsorted Items (<span id="unsorted-count">0</span> remaining)</span>
+                    <div id="sorting-pool" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl border-2 border-brand/30 flex flex-col h-full min-h-[220px]">
+                        <h3 class="text-base font-bold text-brand border-b border-slate-200 pb-2 mb-3 flex items-center justify-between">
+                            <span id="label-bucket-a"><i class="fa-solid fa-folder mr-2"></i>Category A</span>
+                            <span id="count-bucket-a" class="text-xs bg-brand-light text-brand px-2 py-0.5 rounded-full font-semibold">0</span>
+                        </h3>
+                        <div id="bucket-a" class="sorting-bucket flex-1 space-y-2 p-1 rounded-lg border border-dashed border-slate-200 bg-slate-50/50"></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border-2 border-tealAccent/30 flex flex-col h-full min-h-[220px]">
+                        <h3 class="text-base font-bold text-tealAccent border-b border-slate-200 pb-2 mb-3 flex items-center justify-between">
+                            <span id="label-bucket-b"><i class="fa-solid fa-folder mr-2"></i>Category B</span>
+                            <span id="count-bucket-b" class="text-xs bg-tealAccent-light text-tealAccent px-2 py-0.5 rounded-full font-semibold">0</span>
+                        </h3>
+                        <div id="bucket-b" class="sorting-bucket flex-1 space-y-2 p-1 rounded-lg border border-dashed border-slate-200 bg-slate-50/50"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODE 4: FILL-IN-THE-BLANKS -->
+            <section id="section-fillblanks" class="tab-content hidden fade-in space-y-4">
+                <div class="bg-white p-3 rounded-lg border border-slate-200 text-sm text-slate-600">
+                    <p><i class="fa-solid fa-keyboard text-brand mr-2"></i>Select the correct technical term from the word bank to complete each sentence.</p>
+                </div>
+                <div class="bg-brand-light/60 p-4 rounded-xl border border-brand/20">
+                    <span class="text-xs font-bold text-brand uppercase tracking-wider block mb-2">Word Bank</span>
+                    <div id="cloze-wordbank" class="flex flex-wrap gap-2"></div>
+                </div>
+                <div id="cloze-questions" class="space-y-4"></div>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="checkClozeAnswers()" class="px-5 py-2.5 bg-brand hover:bg-brand-dark text-white font-bold rounded-lg text-sm transition-all shadow-sm">
+                        <i class="fa-solid fa-check-double mr-1.5"></i> Check Sentences
+                    </button>
+                </div>
+            </section>
+
+            <!-- MODE 5: PRACTICE QUIZ -->
+            <section id="section-quiz" class="tab-content hidden fade-in space-y-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                        <span id="quiz-question-number" class="text-xs font-bold text-brand uppercase tracking-wider">Question 1</span>
+                        <span id="quiz-score-badge" class="text-xs bg-slate-100 text-slate-700 font-bold px-2.5 py-1 rounded-full">Score: 0</span>
+                    </div>
+                    <h3 id="quiz-question-text" class="text-lg font-bold text-slate-800 leading-snug">Question</h3>
+                    <div id="quiz-options-container" class="space-y-2.5 pt-1"></div>
+                    <div id="quiz-explanation" class="hidden p-4 rounded-lg bg-slate-100 text-sm border border-slate-200 mt-4 fade-in">
+                        <h4 class="font-bold mb-1 text-slate-800">Explanation</h4>
+                        <p id="quiz-explanation-body" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                    <div class="flex justify-end pt-2">
+                        <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden px-5 py-2 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg text-sm transition-all">
+                            Next Question <i class="fa-solid fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER & SUMMARY BADGES -->
+        <footer class="bg-slate-100 border-t border-slate-200 p-4 text-xs text-slate-500 flex flex-wrap justify-between items-center gap-2">
+            <div><i class="fa-solid fa-graduation-cap text-brand mr-1"></i> Edexcel Computer Science Revision Suite</div>
+            <div id="badges-container" class="flex gap-2">
+                <span id="badge-fc" class="px-2 py-0.5 rounded bg-slate-200 text-slate-500 font-medium">Cards: 0</span>
+                <span id="badge-match" class="px-2 py-0.5 rounded bg-slate-200 text-slate-500 font-medium">Match: ✖</span>
+                <span id="badge-sort" class="px-2 py-0.5 rounded bg-slate-200 text-slate-500 font-medium">Sort: ✖</span>
+                <span id="badge-quiz" class="px-2 py-0.5 rounded bg-slate-200 text-slate-500 font-medium">Quiz: 0%</span>
             </div>
-            <h3 class="font-bold text-slate-800">Computers & Systems</h3>
-            <p class="text-xs text-slate-500 mt-1">CPU Architecture, Von Neumann, RAM/ROM, Storage, OS & Utility Software.</p>
-          </div>
-          <button onclick="launchSuite('topic3')" class="mt-4 w-full py-2 bg-brand hover:bg-brand-dark text-white font-semibold text-xs rounded-lg transition-all">
-            Launch Topic 3 Suite
-          </button>
-        </div>
+        </footer>
+    </div>
 
-        <!-- Topic 4 -->
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 hover:border-brand transition-all flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-brand bg-brand-light px-2.5 py-0.5 rounded-full">Topic 4</span>
-              <i class="fa-solid fa-network-wired text-slate-400"></i>
-            </div>
-            <h3 class="font-bold text-slate-800">Communication & Networks</h3>
-            <p class="text-xs text-slate-500 mt-1">Network Topologies, Protocols (TCP/IP, HTTP), Layers, Encryption & Hardware.</p>
-          </div>
-          <button onclick="launchSuite('topic4')" class="mt-4 w-full py-2 bg-brand hover:bg-brand-dark text-white font-semibold text-xs rounded-lg transition-all">
-            Launch Topic 4 Suite
-          </button>
-        </div>
+    <!-- SCRIPT LOGIC -->
+    <script>
+        /* ================= EXPANDED DATASETS ================= */
+        const unitDatabase = {
+            'topic2': {
+                name: "Topic 2: Data Representation",
+                buckets: { catA: "Representation & Numbers", catB: "Media & Compression" },
+                flashcards: [
+                    { id: 1, term: "Bit", def: "The smallest unit of data in a computer, representing a single 0 or 1." },
+                    { id: 2, term: "Byte", def: "A group of 8 bits, capable of representing 256 distinct values." },
+                    { id: 3, term: "Hexadecimal", def: "A base-16 number system using 0-9 and A-F, providing a human-readable shorthand for binary." },
+                    { id: 4, term: "Two's Complement", def: "A binary encoding method for representing signed (negative) integers by flipping bits and adding 1." },
+                    { id: 5, term: "ASCII", def: "A 7-bit character encoding system representing 128 characters, including English letters and numbers." },
+                    { id: 6, term: "Unicode", def: "A 16-bit/32-bit universal character set capable of representing alphabets and symbols worldwide." },
+                    { id: 7, term: "Bitmap Image", def: "A digital image composed of a grid of individual pixels, each assigned a specific color value." },
+                    { id: 8, term: "Color Depth", def: "The number of bits used to represent the color of a single pixel in an image." },
+                    { id: 9, term: "Resolution", def: "The density of pixels in an image, calculated as Width x Height (e.g. 1920x1080)." },
+                    { id: 10, term: "Sample Rate", def: "The number of sound samples recorded per second, measured in Hertz (Hz)." },
+                    { id: 11, term: "Sample Resolution", def: "The number of bits allocated to store the amplitude of each audio sample." },
+                    { id: 12, term: "Lossy Compression", def: "Compression algorithm that permanently discards unnoticeable data to drastically reduce file size." },
+                    { id: 13, term: "Lossless Compression", def: "Compression technique that reduces file size without any loss of original data or quality." },
+                    { id: 14, term: "Run-Length Encoding (RLE)", def: "A lossless data compression method that stores runs of consecutive identical data elements as single values." }
+                ],
+                sorting: [
+                    { id: "s1", title: "Two's Complement Signed Values", category: "catA" },
+                    { id: "s2", title: "Hexadecimal Color Codes (#FF0000)", category: "catA" },
+                    { id: "s3", title: "Unicode Character Encoding", category: "catA" },
+                    { id: "s4", title: "ASCII Text Files", category: "catA" },
+                    { id: "s5", title: "Bitmap Image Pixels", category: "catB" },
+                    { id: "s6", title: "Lossy MP3 Audio Compression", category: "catB" },
+                    { id: "s7", title: "Lossless Run-Length Encoding", category: "catB" },
+                    { id: "s8", title: "Audio Sampling Rate (44.1 kHz)", category: "catB" }
+                ],
+                cloze: [
+                    { sentence: "To represent negative values in binary, computer systems use ________ complement.", answer: "Two's", options: ["Two's", "ASCII", "Lossy"] },
+                    { sentence: "The number of bits allocated per pixel to determine color range is known as color ________.", answer: "Depth", options: ["Depth", "Rate", "Resolution"] },
+                    { sentence: "Audio quality depends on how many times per second sound amplitude is measured, known as sample ________.", answer: "Rate", options: ["Rate", "Depth", "Encoding"] },
+                    { sentence: "File formats like ZIP and PNG use ________ compression so no data is lost upon extraction.", answer: "Lossless", options: ["Lossless", "Lossy", "Hexadecimal"] }
+                ],
+                quiz: [
+                    {
+                        question: "Why do computer scientists frequently use Hexadecimal instead of raw Binary?",
+                        options: [
+                            "Hexadecimal uses less RAM storage than binary.",
+                            "It is easier for humans to read, write, and spot errors in long binary strings.",
+                            "Hexadecimal allows computers to execute code faster.",
+                            "It is required to display graphics on modern monitors."
+                        ],
+                        correct: 1,
+                        explanation: "Hexadecimal reduces 8-bit binary numbers into 2 hex digits, making data vastly easier for humans to inspect."
+                    },
+                    {
+                        question: "What is the result of increasing the color depth of a bitmap image?",
+                        options: [
+                            "More colors can be represented, but the file size increases.",
+                            "The file size decreases because pixels are compressed.",
+                            "The physical dimensions of the image shrink.",
+                            "The audio sample rate improves."
+                        ],
+                        correct: 0,
+                        explanation: "Higher color depth means more bits per pixel, which yields realistic colors but increases image file size."
+                    }
+                ]
+            },
+            'ai': {
+                name: "Emerging Tech: AI, Robotics & Automation",
+                buckets: { catA: "Artificial Intelligence & ML", catB: "Robotics & Automation" },
+                flashcards: [
+                    { id: 1, term: "Artificial Intelligence", def: "Systems engineered to perform tasks that human intelligence normally handles." },
+                    { id: 2, term: "Machine Learning", def: "Algorithms that automatically train and refine models using datasets without explicit manual programming." },
+                    { id: 3, term: "Expert System", def: "An AI system comprising a Knowledge Base and Inference Engine designed to emulate specialist human advice." },
+                    { id: 4, term: "Robotics", def: "The branch of technology designing autonomous physical machines with sensors and actuators." },
+                    { id: 5, term: "Sensors", def: "Hardware input devices measuring physical attributes (e.g., temperature, light, proximity)." },
+                    { id: 6, term: "Actuators", def: "Output motors or mechanisms that turn electrical signals into physical movement." }
+                ],
+                sorting: [
+                    { id: "s1", title: "Neural Network Training", category: "catA" },
+                    { id: "s2", title: "Medical Diagnosis Expert System", category: "catA" },
+                    { id: "s3", title: "Factory Arm Motor Actuators", category: "catB" },
+                    { id: "s4", title: "Proximity Sensor Monitoring", category: "catB" }
+                ],
+                cloze: [
+                    { sentence: "Hardware devices that convert electrical signal outputs into physical mechanical motion are called ________.", answer: "Actuators", options: ["Actuators", "Sensors", "Neural"] }
+                ],
+                quiz: [
+                    {
+                        question: "What primary component of an Expert System holds the rules and factual data?",
+                        options: ["Knowledge Base", "Actuator", "Sensor", "Compiler"],
+                        correct: 0,
+                        explanation: "The Knowledge Base stores domain-specific facts and IF-THEN rules used by the inference engine."
+                    }
+                ]
+            }
+        };
 
-        <!-- Topic 5 -->
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 hover:border-brand transition-all flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-brand bg-brand-light px-2.5 py-0.5 rounded-full">Topic 5</span>
-              <i class="fa-solid fa-shield-halved text-slate-400"></i>
-            </div>
-            <h3 class="font-bold text-slate-800">Issues & Cyber Security</h3>
-            <p class="text-xs text-slate-500 mt-1">Malware, Social Engineering, Security Measures, Ethical & Environmental Impact.</p>
-          </div>
-          <button onclick="launchSuite('topic5')" class="mt-4 w-full py-2 bg-brand hover:bg-brand-dark text-white font-semibold text-xs rounded-lg transition-all">
-            Launch Topic 5 Suite
-          </button>
-        </div>
+        /* ================= STATE CONTROLLER ================= */
+        let activeData = unitDatabase['topic2'];
+        let state = {
+            masteredCards: new Set(),
+            currentCardIndex: 0,
+            isCardFlipped: false,
+            matchingSelectedTerm: null,
+            matchingSelectedDef: null,
+            matchingMatchesFound: 0,
+            matchingTimerSeconds: 0,
+            matchingTimerInterval: null,
+            unsortedItems: [],
+            bucketA: [],
+            bucketB: [],
+            clozeUserAnswers: {},
+            quizIndex: 0,
+            quizScore: 0
+        };
 
-        <!-- Emerging Tech & AI -->
-        <div class="bg-slate-50 border border-amber-300 bg-amber-50/30 rounded-xl p-4 hover:border-amber-500 transition-all flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">Emerging Tech</span>
-              <i class="fa-solid fa-robot text-amber-600"></i>
-            </div>
-            <h3 class="font-bold text-slate-800">AI, Robotics & Automation</h3>
-            <p class="text-xs text-slate-500 mt-1">Machine Learning, Expert Systems, Robotics, Sensors, Automation & Ethics.</p>
-          </div>
-          <button onclick="launchSuite('ai')" class="mt-4 w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded-lg transition-all">
-            Launch AI & Tech Suite
-          </button>
-        </div>
+        window.onload = function() {
+            switchUnit('topic2');
+        };
 
-      </div>
+        function switchUnit(unitKey) {
+            if (!unitDatabase[unitKey]) return;
+            activeData = unitDatabase[unitKey];
+            
+            document.getElementById('portal-subtitle').innerText = activeData.name;
+            document.getElementById('label-bucket-a').innerHTML = `<i class="fa-solid fa-folder mr-2"></i>${activeData.buckets.catA}`;
+            document.getElementById('label-bucket-b').innerHTML = `<i class="fa-solid fa-folder mr-2"></i>${activeData.buckets.catB}`;
+            
+            state.masteredCards.clear();
+            state.currentCardIndex = 0;
+            
+            initFlashcards();
+            initMatchingGame();
+            initSortingGame();
+            initClozeGame();
+            initQuiz();
+            updateOverallProgress();
+        }
 
-      <!-- DYNAMIC INTERACTIVE DISPLAY AREA -->
-      <section id="interactive-area" class="hidden bg-slate-50 p-6 rounded-2xl border border-slate-200 mt-8">
-        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
-          <h2 id="suite-title" class="text-xl font-bold text-brand">Selected Suite</h2>
-          <span id="suite-counter" class="text-xs bg-brand-light text-brand font-bold px-3 py-1 rounded-full">0 Terms</span>
-        </div>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-brand', 'font-semibold');
+                btn.classList.add('text-white');
+            });
 
-        <!-- Flashcard View -->
-        <div id="flashcard-card" class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center min-h-[200px] flex flex-col items-center justify-center cursor-pointer" onclick="flipCard()">
-          <span class="text-xs font-bold text-brand bg-brand-light px-3 py-1 rounded-full mb-3 uppercase tracking-wider" id="card-type">Key Term</span>
-          <h3 id="card-term" class="text-2xl font-bold text-slate-800">Select a unit above</h3>
-          <p id="card-def" class="hidden text-slate-600 mt-2 text-base max-w-lg leading-relaxed"></p>
-          <p class="text-xs text-slate-400 mt-4"><i class="fa-solid fa-hand-pointer mr-1"></i> Click card to flip term / definition</p>
-        </div>
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.add('bg-white', 'text-brand', 'font-semibold');
+            activeBtn.classList.remove('text-white');
+        }
 
-        <!-- Navigation Controls -->
-        <div class="flex justify-between items-center mt-4">
-          <button onclick="prevCard()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg text-xs">
-            <i class="fa-solid fa-arrow-left mr-1"></i> Previous
-          </button>
-          <button onclick="nextCard()" class="px-4 py-2 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg text-xs">
-            Next Term <i class="fa-solid fa-arrow-right ml-1"></i>
-          </button>
-        </div>
-      </section>
+        function updateOverallProgress() {
+            const fc = activeData.flashcards.length ? (state.masteredCards.size / activeData.flashcards.length) * 25 : 0;
+            const match = state.matchingMatchesFound === 6 ? 25 : (state.matchingMatchesFound / 6) * 25;
+            const sort = (state.unsortedItems.length === 0 && (state.bucketA.length + state.bucketB.length) === activeData.sorting.length) ? 25 : 0;
+            const qz = activeData.quiz.length ? (state.quizScore / activeData.quiz.length) * 25 : 0;
 
-    </main>
-  </div>
+            const total = Math.round(fc + match + sort + qz);
+            document.getElementById('overall-progress-text').innerText = `${total}%`;
+            if (total === 100 && typeof confetti === 'function') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
 
-  <script>
-    /* FULL EDEXCEL SPECIFICATION THEORY DATASET */
-    const theoryData = {
-      'topic1': [
-        { term: "Abstraction", def: "Filtering out unnecessary details to focus on the essential characteristics needed to solve a problem." },
-        { term: "Decomposition", def: "Breaking down a complex problem into smaller, more manageable sub-problems." },
-        { term: "Algorithmic Thinking", def: "Defining a clear, step-by-step set of instructions to solve a problem." }
-      ],
-      'topic2': [
-        { term: "Hexadecimal", def: "Base-16 system (0-9, A-F) used to represent binary numbers in a human-readable format." },
-        { term: "Two's Complement", def: "A binary encoding method used to represent negative numbers by flipping bits and adding 1." },
-        { term: "Color Depth", def: "The number of bits assigned to represent the color of a single pixel in an image." },
-        { term: "Sample Rate", def: "The number of audio sound samples taken per second, measured in Hertz (Hz)." }
-      ],
-      'topic3': [
-        { term: "Fetch-Decode-Execute Cycle", def: "The continuous sequence where the CPU retrieves an instruction from RAM, decodes it, and executes it." },
-        { term: "Control Unit (CU)", def: "CPU component that manages instruction execution and controls timing signals across hardware." },
-        { term: "Defragmentation", def: "Utility software that reorganises scattered file fragments on a magnetic hard drive to store them contiguously." }
-      ],
-      'topic4': [
-        { term: "Star Topology", def: "Network layout where all node devices connect directly to a central switch or hub." },
-        { term: "TCP/IP Suite", def: "Four-layer protocol suite (Application, Transport, Internet, Link) governing data packet transmission." },
-        { term: "MAC Address", def: "A unique 48-bit physical hardware identifier burned into a Network Interface Card (NIC)." }
-      ],
-      'topic5': [
-        { term: "Social Engineering", def: "Manipulating individuals into voluntarily revealing confidential data (e.g. Phishing, Baiting)." },
-        { term: "Penetration Testing", def: "Authorized simulated cyberattacks against a system to discover security vulnerabilities." },
-        { term: "E-Waste", def: "Discarded electronic devices containing toxic elements like lead and mercury requiring specialist disposal." }
-      ],
-      'ai': [
-        { term: "Artificial Intelligence (AI)", def: "Computer systems capable of performing tasks that normally require human intelligence, such as learning and reasoning." },
-        { term: "Machine Learning", def: "A subset of AI where algorithms automatically improve their performance through data training without explicit programming." },
-        { term: "Expert System", def: "An AI program containing a Knowledge Base, Inference Engine, and User Interface to emulate human expert decision-making." },
-        { term: "Robotics", def: "The branch of technology dealing with the design, construction, and operation of automated physical machines." },
-        { term: "Sensors & Actuators", def: "Sensors collect physical data (e.g. temperature, light); Actuators convert electrical signals into physical movement." },
-        { term: "Automated System", def: "A system operating without human intervention using sensors, microprocessors, and actuators in a feedback loop." }
-      ]
-    };
+        /* --- FLASHCARDS MODE --- */
+        function initFlashcards() {
+            showCard(state.currentCardIndex);
+        }
 
-    let currentDataset = [];
-    let currentIndex = 0;
-    let isFlipped = false;
+        function showCard(index) {
+            state.isCardFlipped = false;
+            document.getElementById('flashcard-inner').classList.remove('rotate-y-180');
+            const card = activeData.flashcards[index] || { term: "N/A", def: "No cards available." };
+            document.getElementById('card-front-term').innerText = card.term;
+            document.getElementById('card-back-def').innerText = card.def;
+            document.getElementById('flashcard-counter').innerText = `${index + 1} / ${activeData.flashcards.length}`;
+        }
 
-    function launchSuite(topicId) {
-      currentDataset = theoryData[topicId] || [];
-      currentIndex = 0;
-      isFlipped = false;
+        function flipCard() {
+            state.isCardFlipped = !state.isCardFlipped;
+            document.getElementById('flashcard-inner').classList.toggle('rotate-y-180', state.isCardFlipped);
+        }
 
-      if (currentDataset.length === 0) {
-        alert("Suite coming soon!");
-        return;
-      }
+        function nextCard() {
+            state.currentCardIndex = (state.currentCardIndex + 1) % activeData.flashcards.length;
+            showCard(state.currentCardIndex);
+        }
 
-      document.getElementById('interactive-area').classList.remove('hidden');
-      document.getElementById('suite-counter').innerText = currentDataset.length + " Terms Loaded";
-      
-      showCard();
+        function prevCard() {
+            state.currentCardIndex = (state.currentCardIndex - 1 + activeData.flashcards.length) % activeData.flashcards.length;
+            showCard(state.currentCardIndex);
+        }
 
-      // Smooth scroll into view
-      document.getElementById('interactive-area').scrollIntoView({ behavior: 'smooth' });
-    }
+        function markCard(mastered) {
+            const card = activeData.flashcards[state.currentCardIndex];
+            if (mastered) state.masteredCards.add(card.id);
+            else state.masteredCards.delete(card.id);
+            document.getElementById('badge-fc').innerText = `Cards: ${state.masteredCards.size}/${activeData.flashcards.length}`;
+            updateOverallProgress();
+            nextCard();
+        }
 
-    function showCard() {
-      isFlipped = false;
-      const card = currentDataset[currentIndex];
-      document.getElementById('card-term').innerText = card.term;
-      document.getElementById('card-def').innerText = card.def;
-      document.getElementById('card-def').classList.add('hidden');
-      document.getElementById('card-type').innerText = `Term ${currentIndex + 1} of ${currentDataset.length}`;
-    }
+        /* --- MATCHING GAME MODE --- */
+        function initMatchingGame() {
+            clearInterval(state.matchingTimerInterval);
+            state.matchingTimerSeconds = 0;
+            state.matchingMatchesFound = 0;
+            state.matchingSelectedTerm = null;
+            state.matchingSelectedDef = null;
 
-    function flipCard() {
-      isFlipped = !isFlipped;
-      const defEl = document.getElementById('card-def');
-      if (isFlipped) {
-        defEl.classList.remove('hidden');
-      } else {
-        defEl.classList.add('hidden');
-      }
-    }
+            document.getElementById('matching-timer').innerText = "00:00";
+            state.matchingTimerInterval = setInterval(() => {
+                state.matchingTimerSeconds++;
+                const mins = String(Math.floor(state.matchingTimerSeconds / 60)).padStart(2, '0');
+                const secs = String(state.matchingTimerSeconds % 60).padStart(2, '0');
+                document.getElementById('matching-timer').innerText = `${mins}:${secs}`;
+            }, 1000);
 
-    function nextCard() {
-      if (currentDataset.length === 0) return;
-      currentIndex = (currentIndex + 1) % currentDataset.length;
-      showCard();
-    }
+            const pool = [...activeData.flashcards].sort(() => 0.5 - Math.random()).slice(0, 6);
+            const terms = pool.map(item => ({ id: item.id, text: item.term })).sort(() => 0.5 - Math.random());
+            const defs = pool.map(item => ({ id: item.id, text: item.def })).sort(() => 0.5 - Math.random());
 
-    function prevCard() {
-      if (currentDataset.length === 0) return;
-      currentIndex = (currentIndex - 1 + currentDataset.length) % currentDataset.length;
-      showCard();
-    }
-  </script>
+            const termsContainer = document.getElementById('matching-terms');
+            const defsContainer = document.getElementById('matching-defs');
+            termsContainer.innerHTML = '';
+            defsContainer.innerHTML = '';
+
+            terms.forEach(t => {
+                termsContainer.innerHTML += `<button onclick="selectMatchItem('term', ${t.id}, this)" class="match-term-btn w-full text-left p-3 rounded-lg bg-white border border-slate-200 text-sm font-semibold hover:border-brand transition-all" data-id="${t.id}">${t.text}</button>`;
+            });
+
+            defs.forEach(d => {
+                defsContainer.innerHTML += `<button onclick="selectMatchItem('def', ${d.id}, this)" class="match-def-btn w-full text-left p-3 rounded-lg bg-white border border-slate-200 text-xs text-slate-600 hover:border-brand transition-all" data-id="${d.id}">${d.text}</button>`;
+            });
+        }
+
+        function selectMatchItem(type, id, el) {
+            if (type === 'term') {
+                document.querySelectorAll('.match-term-btn').forEach(b => b.classList.remove('border-brand', 'bg-brand-light'));
+                el.classList.add('border-brand', 'bg-brand-light');
+                state.matchingSelectedTerm = { id, el };
+            } else {
+                document.querySelectorAll('.match-def-btn').forEach(b => b.classList.remove('border-brand', 'bg-brand-light'));
+                el.classList.add('border-brand', 'bg-brand-light');
+                state.matchingSelectedDef = { id, el };
+            }
+
+            if (state.matchingSelectedTerm && state.matchingSelectedDef) {
+                if (state.matchingSelectedTerm.id === state.matchingSelectedDef.id) {
+                    state.matchingSelectedTerm.el.classList.add('opacity-40', 'pointer-events-none');
+                    state.matchingSelectedDef.el.classList.add('opacity-40', 'pointer-events-none');
+                    state.matchingMatchesFound++;
+                    if (state.matchingMatchesFound === 6) {
+                        clearInterval(state.matchingTimerInterval);
+                        document.getElementById('badge-match').innerText = "Match: ✔";
+                        updateOverallProgress();
+                    }
+                }
+                state.matchingSelectedTerm = null;
+                state.matchingSelectedDef = null;
+            }
+        }
+
+        /* --- CATEGORISATION SORTING MODE --- */
+        function initSortingGame() {
+            state.unsortedItems = [...activeData.sorting];
+            state.bucketA = [];
+            state.bucketB = [];
+            renderSorting();
+        }
+
+        function renderSorting() {
+            const pool = document.getElementById('sorting-pool');
+            const bA = document.getElementById('bucket-a');
+            const bB = document.getElementById('bucket-b');
+            
+            pool.innerHTML = ''; bA.innerHTML = ''; bB.innerHTML = '';
+            document.getElementById('unsorted-count').innerText = state.unsortedItems.length;
+
+            state.unsortedItems.forEach(item => {
+                pool.innerHTML += `<div class="bg-white border border-slate-300 shadow-sm p-2 rounded-lg text-xs font-semibold flex items-center gap-2">
+                    <span>${item.title}</span>
+                    <button onclick="sortItem('${item.id}', 'catA')" class="bg-brand text-white px-2 py-0.5 rounded text-[10px]">A</button>
+                    <button onclick="sortItem('${item.id}', 'catB')" class="bg-tealAccent text-white px-2 py-0.5 rounded text-[10px]">B</button>
+                </div>`;
+            });
+
+            state.bucketA.forEach(item => {
+                bA.innerHTML += `<div class="bg-white p-2 rounded border border-brand/30 text-xs font-medium text-slate-700">${item.title}</div>`;
+            });
+
+            state.bucketB.forEach(item => {
+                bB.innerHTML += `<div class="bg-white p-2 rounded border border-tealAccent/30 text-xs font-medium text-slate-700">${item.title}</div>`;
+            });
+
+            document.getElementById('count-bucket-a').innerText = state.bucketA.length;
+            document.getElementById('count-bucket-b').innerText = state.bucketB.length;
+            
+            if (state.unsortedItems.length === 0) {
+                document.getElementById('badge-sort').innerText = "Sort: ✔";
+                updateOverallProgress();
+            }
+        }
+
+        function sortItem(id, targetCategory) {
+            const idx = state.unsortedItems.findIndex(i => i.id === id);
+            if (idx === -1) return;
+            const item = state.unsortedItems.splice(idx, 1)[0];
+            
+            if (item.category === targetCategory) {
+                if (targetCategory === 'catA') state.bucketA.push(item);
+                else state.bucketB.push(item);
+            } else {
+                alert("Incorrect category for this item!");
+                state.unsortedItems.push(item);
+            }
+            renderSorting();
+        }
+
+        /* --- CLOZE KEYWORDS MODE --- */
+        function initClozeGame() {
+            const wb = document.getElementById('cloze-wordbank');
+            const qs = document.getElementById('cloze-questions');
+            wb.innerHTML = ''; qs.innerHTML = '';
+
+            activeData.cloze.forEach((c, idx) => {
+                qs.innerHTML += `<div class="bg-white p-4 rounded-xl border border-slate-200 text-sm">
+                    <p class="font-medium text-slate-700 mb-2">${idx + 1}. ${c.sentence.replace('________', `<select id="cloze-sel-${idx}" class="border border-slate-300 rounded px-2 py-1 bg-slate-50 font-bold text-brand"><option value="">[Select]</option>${c.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`)}</p>
+                </div>`;
+            });
+        }
+
+        function checkClozeAnswers() {
+            let correct = 0;
+            activeData.cloze.forEach((c, idx) => {
+                const sel = document.getElementById(`cloze-sel-${idx}`);
+                if (sel && sel.value === c.answer) correct++;
+            });
+            alert(`You got ${correct} out of ${activeData.cloze.length} correct!`);
+        }
+
+        /* --- PRACTICE QUIZ MODE --- */
+        function initQuiz() {
+            state.quizIndex = 0;
+            state.quizScore = 0;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            const q = activeData.quiz[state.quizIndex];
+            if (!q) return;
+
+            document.getElementById('quiz-question-number').innerText = `Question ${state.quizIndex + 1} of ${activeData.quiz.length}`;
+            document.getElementById('quiz-score-badge').innerText = `Score: ${state.quizScore}`;
+            document.getElementById('quiz-question-text').innerText = q.question;
+            document.getElementById('quiz-explanation').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            const container = document.getElementById('quiz-options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                container.innerHTML += `<button onclick="answerQuiz(${idx})" class="quiz-opt-btn w-full text-left p-3.5 rounded-xl border border-slate-200 text-sm font-medium hover:border-brand hover:bg-slate-50 transition-all">${opt}</button>`;
+            });
+        }
+
+        function answerQuiz(selectedIdx) {
+            const q = activeData.quiz[state.quizIndex];
+            const btns = document.querySelectorAll('.quiz-opt-btn');
+            
+            btns.forEach((btn, idx) => {
+                btn.classList.add('pointer-events-none');
+                if (idx === q.correct) btn.classList.add('bg-emerald-100', 'border-emerald-400', 'text-emerald-800');
+                else if (idx === selectedIdx) btn.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-800');
+            });
+
+            if (selectedIdx === q.correct) state.quizScore++;
+            
+            document.getElementById('quiz-explanation-body').innerText = q.explanation;
+            document.getElementById('quiz-explanation').classList.remove('hidden');
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            state.quizIndex++;
+            if (state.quizIndex < activeData.quiz.length) {
+                showQuizQuestion();
+            } else {
+                const pct = Math.round((state.quizScore / activeData.quiz.length) * 100);
+                document.getElementById('badge-quiz').innerText = `Quiz: ${pct}%`;
+                updateOverallProgress();
+                alert(`Quiz complete! Final Score: ${state.quizScore}/${activeData.quiz.length}`);
+            }
+        }
+    </script>
 </body>
 </html>
